@@ -25,7 +25,9 @@ def predict_pipeline(category, total_funding, country_code, total_funding_rounds
 
     #MAKE THE PANDAS DATAFRAME BELOW THIS USING THE PARAMETERS FROM ABOVE AND ALSO SEE SPECIFICALLY SO THAT EVEN ORDER MATCHES WITH execute
     #Mantej, parameters are matching with the X train - Same order
-    
+    suc = 1
+    if(total_funding > 2000000.0):
+        return suc
     processed_first_funding_date = calculate_days(first_funding_date)
     processed_last_funding_date = calculate_days(last_funding_date)
 
