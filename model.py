@@ -10,6 +10,10 @@ from sklearn.feature_extraction.text import CountVectorizer
 model = pickle.load(open('test.pkl','rb'))
 
 df = pd.read_csv('train_upsampled_shuffled.csv')
+df_avg = pd.read_csv('companies_allFeatures.csv')
+df_avg = df_avg.drop(columns=['permalink', 'name', 'homepage_url', 'status', 'state_code',
+                      'region','city', 'founded_at', 'first_funding_at','last_funding_at'])
+df_clean = df_avg.dropna()
 X_train = df.iloc[:,1:-1]
 
 today = pd.Timestamp.today().normalize()
@@ -20,6 +24,18 @@ def calculate_days(date_string):
     days_difference = (today - specified_date).days
     return days_difference
 
+def avg_country_data(country_code):
+    
+    filtered_df = df_clean[(df_clean['country_code'] == country_code) & (df_clean['label'] == 1)]
+    funding_total_average = filtered_df['funding_total_usd'].mean()
+    funding_duration_avg = filtered_df['funding_duration'].mean()
+    funding_rounds_avg = filtered_df['funding_rounds'].mean()
+    
+    funding_rounds_avg = round(funding_rounds_avg)
+    funding_duration_avg = abs(funding_duration_avg)
+    list = [funding_total_average, funding_duration_avg, funding_rounds_avg]
+    return list
+    
 def predict_pipeline(category, total_funding, country_code, total_funding_rounds, first_funding_date, last_funding_date):
     # processed_category = re.sub(r'\W+', ' ', category).lower()
 
@@ -28,6 +44,7 @@ def predict_pipeline(category, total_funding, country_code, total_funding_rounds
     suc = 1
     if(total_funding > 2000000.0):
         return suc
+    
     processed_first_funding_date = calculate_days(first_funding_date)
     processed_last_funding_date = calculate_days(last_funding_date)
 
