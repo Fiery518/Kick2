@@ -14,7 +14,10 @@ class PredictionRequest(BaseModel):
     total_funding_rounds: int
     first_funding_date: str
     last_funding_date: str
-    
+
+class DataRequest(BaseModel):
+    country_code: str
+
 class PredictionOut(BaseModel):
     success: int
 
@@ -34,7 +37,7 @@ def predict(payload: PredictionRequest):
     return {"success": success}
 
 @app.post("/dataAvg",response_model=DataOut)
-def predict(payload: PredictionRequest):
+def predict(payload: DataRequest):
     arr = avg_country_data(payload.country_code)
     return {"funding_total_average": arr[0], "funding_duration_avg": arr[1], "funding_rounds_avg": arr[2]}
 
